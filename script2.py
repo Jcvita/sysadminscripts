@@ -1,9 +1,9 @@
-import os
 import sys
 import subprocess
+import time
 
 for csv in [x for x in sys.argv[1:] if x[-4:] == ".csv"]:
-    users = [] 
+    users = []
     for line in open(csv, "r").readlines():
         eid, lname, fname, off, phone, dept, grp = line.split(",")
         shell = "/bin/chs" if grp == "office" or grp == "ceo" else "/bin/bash"
@@ -18,7 +18,7 @@ for csv in [x for x in sys.argv[1:] if x[-4:] == ".csv"]:
         if "" in line.split(","):
             print(f"{eid} not added due to missing records")
             continue
-        if not grp == subprocess.run(f"getent group {grp}".split(" "), stdout=subprocess.PIPE, text=True)\
+        if not grp == subprocess.run(f"getent group {grp}".split(" "), stdout=subprocess.PIPE, text=True) \
                 .stdout.split(":")[0]:
             print(f"groupadd -f {grp}")
             subprocess.run(f"getent group {grp}".split(" "))
@@ -26,4 +26,14 @@ for csv in [x for x in sys.argv[1:] if x[-4:] == ".csv"]:
         dupe = str(users.count(user)) if users.count(user) > 0 else ""
         users.append(user)
         user = user + dupe
-        #TODO do adduser command
+        subprocess.run(f"useradd -m -d /home/{grp}/{user} -s {shell} -g {grp} -c \"{fname} {lname}\" {user}".split(" "))
+        print(f"useradd -m -d /home/{grp}/{user} -s {shell} -g {grp} -c \"{fname} {lname}\" {user}")
+        # TODO run passwd with stdin
+        p = subprocess.Popen(f"passwd {user}".split(" "), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        p.stdin.write(user[::-1])
+        p.stdin.flush()
+        print(p.stdout)
+        time.sleep(.001)
+        e = subprocess.run(f"passwd -e {user}", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(e.stdout)
