@@ -27,7 +27,8 @@ for csv in [x for x in sys.argv[1:] if x[-4:] == ".csv"]:
         dupe = str(users.count(user)) if users.count(user) > 0 else ""
         users.append(user)
         user = user + dupe
-        subprocess.run(["useradd", "-m", "-d", f"/home/{grp}/{user}", "-s", shell, "-g", grp, "-c", f"\"{fname} {lname}\"", user])
+        subprocess.run(["useradd", "-m", "-d", f"/home/{grp}/{user}", "-s", shell, "-g", grp, "-c",
+                        f"\"{fname} {lname}\"", user])
         print(f"useradd -m -d /home/{grp}/{user} -s {shell} -g {grp} -c \"{fname} {lname}\" {user}")
         # TODO run passwd with stdin
         p = subprocess.Popen(f"passwd --stdin {user}".split(" "), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
