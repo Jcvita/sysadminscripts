@@ -6,5 +6,5 @@ Checks connection to your default gateway, remote host, and the DNS server to ma
 # Script 2
 Creates linux user accounts and groups from entries in a CSV file
 # Script 3
-
+Search the filesystem for a file and create a symlink for it wherever the user runs the script from. Gives a report of symlinks on the desktop.
 # Script 4
